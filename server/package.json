@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@google-cloud/storage": "^7.16.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "http": "^0.0.1-security",
+    "mongoose": "^8.14.1",
+    "socket.io": "^4.8.1"
+  },
+  "scripts": {
+    "build": "echo \"No build step needed\"",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
