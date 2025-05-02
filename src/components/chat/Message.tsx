@@ -6,6 +6,7 @@ import {nodedomain} from '../../config'
 
 interface MessageItemProps {
   message: Message;
+  dialogfunction: (data:any)=> void
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({ message }) => {

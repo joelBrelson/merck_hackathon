@@ -2,10 +2,18 @@ import AppLayout from './components/layout/AppLayout';
 import ChatWindow from './components/chat/ChatWindow';
 import useChat from './hooks/useChat';
 import { io } from 'socket.io-client';
+import React from 'react';
 
 
 function App() {
   const { messages, isLoading, error, sendMessage, clearError } = useChat();
+  const [opendialog, setOpenDialog] = React.useState(false);
+
+
+
+  const OpenDialog =()=>{
+     console.log('Dialog opened');
+  }
 
  
 
@@ -22,6 +30,7 @@ function App() {
           error={error}
           onSendMessage={sendMessage}
           onClearError={clearError}
+          dialogfunction={OpenDialog}
         />
         
       </div>

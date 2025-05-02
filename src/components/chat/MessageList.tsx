@@ -5,14 +5,12 @@ import MessageItem from './Message';
 
 interface MessageListProps {
   messages: MessageType[];
+  dailaogfunction: (data:any)=> void;
   isLoading: boolean;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, isLoading,dailaogfunction }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-
-
 
 
 
@@ -31,7 +29,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <MessageItem message={message} />
+          <MessageItem message={message} dialogfunction={dailaogfunction} />
         </motion.div>
       ))}
       

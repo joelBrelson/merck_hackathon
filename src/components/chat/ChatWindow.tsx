@@ -11,6 +11,7 @@ interface ChatWindowProps {
   error: string | null;
   onSendMessage: (message: string) => void;
   onClearError: () => void;
+  dialogfunction: (data:any)=> void
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -19,6 +20,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   error,
   onSendMessage,
   onClearError,
+  dialogfunction
 }) => {
   return (
     <motion.div
@@ -44,7 +46,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       )}
 
       {/* Messages area */}
-      <MessageList messages={messages} isLoading={isLoading} />
+      <MessageList messages={messages} dailaogfunction={dialogfunction} isLoading={isLoading} />
 
       {/* Input area */}
       <div className="p-4 bg-white/50 backdrop-blur-sm border-t border-gray-200/50">

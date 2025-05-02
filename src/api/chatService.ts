@@ -29,8 +29,8 @@ class ChatService {
       params: { collection: 'AgentConversationLogs' },
   }).then((response) => {
       console.log('ChatService: Axios fetch successful after event:', response); // Add this log
-      const conversationData = response?.data?.data?.conversation;
-      if (Array.isArray(conversationData)) {
+      const conversationData = {messages:response?.data?.data?.conversation, isLoading:response?.data?.data?.active_request};
+      if (conversationData?.messages) {
          console.log('ChatService: Calling messageCallback with data:', conversationData); // Add this log
          (this.messageCallback as any)(conversationData); // <-- This line *calls* the function registered in useChat
       } else {

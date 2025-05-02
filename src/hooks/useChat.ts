@@ -31,23 +31,21 @@ const useChat = () => {
           });
           console.log('Initial fetch result:', res);
           const Datas = res?.data?.data?.conversation;
-
-          // Create welcome message
-          const welcomeMessage = createWelcomeMessage();
+          const isLoading = res?.data?.data?.active_request
+          console.log(res?.data?.data?.active_request)
 
           if (Array.isArray(Datas)) {
                setState(prevState => ({
                   ...prevState,
                   // Prepend the welcome message to the fetched history
-                  messages: [welcomeMessage, ...Datas],
-                  isLoading: false, // Turn off loading
+                  messages: [ ...Datas],
+                  isLoading: isLoading, // Turn off loading
               }));
           } else {
                console.warn('Initial fetch data is not an array:', Datas);
                setState(prevState => ({
                   ...prevState,
                   // Just show the welcome message if fetch fails or returns invalid data
-                  messages: [welcomeMessage],
                   isLoading: false,
                }));
           }
@@ -75,13 +73,14 @@ const useChat = () => {
       // --- Set up Socket Listeners ---
       // Set up the SINGLE message listener that updates the whole array
       // KEEP THIS BLOCK:
-      chatService.onMessage((updatedMessages: any[]) => { // Assuming ChatService passes the full array
+      chatService.onMessage((updatedMessages: any) => { // Assuming ChatService passes the full array
           console.log('useChat messageCallback received:', updatedMessages);
-           if (Array.isArray(updatedMessages)) {
+           if (updatedMessages?.messages) {
               setState(prevState => ({
                 ...prevState,
                 // Directly assign the new array to replace the old one
-                messages: updatedMessages,
+                messages:updatedMessages.messages,
+                isLoading: updatedMessages.isLoading, // Update loading state if needed
               }));
            } else {
               console.warn('onMessage received non-array data:', updatedMessages);
@@ -165,26 +164,33 @@ const useChat = () => {
       
 
       await axios.put(`${nodedomain}/messageinsert`,{
+
          id:'65fba10e7d3c2b1f0e8d6a54',
          collectionsUsed:'AgentConversationLogs',
          fieldname:'conversation',
-         data: userMessage // Use the userMessage object created above
+         data: userMessage, // Use the userMessage object created above
+         activerequest: true
       });
       console.log('User message inserted via PUT');
 
-       const aiResponse = await axios.post('https://vrzcr3naj7.execute-api.us-east-1.amazonaws.com/newstage/synagentsv4',
-         {
-           user_input: {
-             query: content,
-             conv_id: "65fba10e7d3c2b1f0e8d6a54"
-           },
-           task_name: "synagents"
-         });
+       const aiResponse = await axios.post('https://microservices.boltzmann.co/v3/tools/boltchemAgent_2',
+          {
+            "file_path": [
+              ""
+            ],
+            "query": content,
+            "conv_id": "65fba10e7d3c2b1f0e8d6a54",
+            "tokenid": ""
+          },
+          {
+          headers:{
+            'Content-Type':'application/json',
+          }
+        });
        console.log('AI trigger POST successful:', aiResponse.data);
        
         setState(prevState => ({
-            ...prevState,
-            isLoading: false, // Turn off loading after sending message/triggering AI
+            ...prevState, // Turn off loading after sending message/triggering AI
             error: null,
         }));
 
@@ -195,7 +201,7 @@ const useChat = () => {
       setState(prevState => ({
         ...prevState,
         error: error.response?.data?.message || error.message || 'Failed to send message',
-        isLoading: false,
+        isLoading: true,
          // Optional: Remove the optimistically added user message if the send failed
          // messages: prevState.messages.filter(msg => msg.id !== userMessage.id)
       }));
